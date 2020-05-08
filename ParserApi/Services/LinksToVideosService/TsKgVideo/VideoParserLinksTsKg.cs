@@ -1,8 +1,9 @@
-﻿using HtmlAgilityPack;
+﻿using System.Net;
+using HtmlAgilityPack;
+using static System.String;
 using Microsoft.Extensions.Configuration;
 using ParserApi.Services.HttpWebRequestService;
 using ParserApi.Services.LinksToVideosService.Contract;
-using System.Net;
 
 namespace ParserApi.Services.LinksToVideosService.TsKgVideo
 {
@@ -33,7 +34,7 @@ namespace ParserApi.Services.LinksToVideosService.TsKgVideo
 
         private string GetLinkMovieResult(string url)
         {
-            var link = _tsKg + url;
+            var link = Concat(_tsKg, url);
             var downloadLink = GetPartDownloadLink(link);
             var temporaryLink = GetTemporaryLink(downloadLink);
             var responce = GetLinkFromRequest(temporaryLink);
@@ -43,30 +44,21 @@ namespace ParserApi.Services.LinksToVideosService.TsKgVideo
 
         private string GetPartDownloadLink(string link)
         {
-            var downloadLink = _htmlWeb.Load(link).GetElementbyId("download-button")?.GetAttributeValue("href", "");
-            return ConcatenateValue(downloadLink);
+            var partLink = _htmlWeb.Load(link).GetElementbyId("download-button")?.GetAttributeValue("href", "");
+            return Concat(_tsKg, partLink);
         }
 
         private string GetTemporaryLink(string link)
         {
-            var temporaryLink = _htmlWeb.Load(link).
-               GetElementbyId("dl-button").
-               Element("a").
-               GetAttributeValue("href", "");
-            return ConcatenateValue(temporaryLink);
+            var temporaryLink = _htmlWeb.Load(link).GetElementbyId("dl-button").Element("a").GetAttributeValue("href", "");
+            return Concat(_tsKg, temporaryLink);
         }
 
         private string CreateVideoUrl(string responce)
         {
-            var header = responce.Split('/');
-            var data = header[3];
-            var catalog = header[4];
-            var numberCatalog = header[5];
-            var name = header[6];
-            var season = header[7];
-            var token = header[8].Replace("\r\nContent-Type: text", string.Empty);
-            var videoUrl = $"http://{data}/{catalog}/{numberCatalog}/{name}/{season}/{token}";
-            return videoUrl;
+            responce = responce.Substring(173);
+            responce = responce.Remove(responce.Length - 84);
+            return responce;
         }
 
         /// <summary>
@@ -84,12 +76,6 @@ namespace ParserApi.Services.LinksToVideosService.TsKgVideo
             {
                 return ex.Response.Headers.ToString();
             }
-        }
-
-        private string ConcatenateValue(string partUrl)
-        {
-            var result = _tsKg + partUrl;
-            return result;
         }
     }
 }
