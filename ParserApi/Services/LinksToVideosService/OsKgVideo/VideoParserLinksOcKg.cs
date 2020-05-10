@@ -1,20 +1,22 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Net;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
-using ParserApi.Services.ParserServic.Contract;
+using ParserApi.Services.HttpWebRequestService;
 using ParserApi.Services.LinksToVideosService.Contract;
 
 namespace ParserApi.Services.LinksToVideosService.OsKgVideo
 {
     public class VideoParserLinksOcKg: IVideoLinks
     {
-        private readonly ParserBase _parser;
         private readonly IConfiguration _configuration;
-    
-        public VideoParserLinksOcKg(ParserBase parser, IConfiguration configuration)
+        private readonly IHttpWebRequest _webRequest;
+
+        public VideoParserLinksOcKg(IHttpWebRequest webRequest, IConfiguration configuration)
         {
-            _parser = parser;
+            _webRequest = webRequest;
             _configuration = configuration;
         }
 
@@ -34,7 +36,7 @@ namespace ParserApi.Services.LinksToVideosService.OsKgVideo
         {
             var license = GetLicenseByUrl(url);
             var temporaryLink = ConcatenateValueByKey(license, "OsKg");
-            var html = _parser.ToParse(temporaryLink);
+            var html = GetHtml(temporaryLink);
             var videoUrl = GetVideoUrl(html);
             var proxy = ConcatenateValueByKey(videoUrl,"Proxy");
             return proxy;
@@ -43,8 +45,8 @@ namespace ParserApi.Services.LinksToVideosService.OsKgVideo
         private string GetLicenseByUrl(string url)
         {
             var apiUrl = ConcatenateValueByKey(url, "OsKgUrlApi");
-            var responce = _parser.ToParse(apiUrl).Trim();
-            var license = GetLicenseByJson(responce);
+            var html = GetHtml(apiUrl);
+            var license = GetLicenseByHtml(html);
             return license;
         }
 
@@ -85,11 +87,32 @@ namespace ParserApi.Services.LinksToVideosService.OsKgVideo
             return result;
         }
 
-        private string GetLicenseByJson(string json)
+        private string GetLicenseByHtml(string html)
         {
-            var jsonValid = json.Replace("JsHttpRequest.dataReady(", "").Replace(")", "");
+            var jsonValid = html.Replace("JsHttpRequest.dataReady(", "").Replace(")", "");
             var license = (string)JObject.Parse(jsonValid).SelectToken("js[0].response.movie.files[0].links.license");
             return license;
+        }
+
+        private string GetHtml(string url)
+        {
+            var data = "";
+            var httpWeb = (HttpWebResponse)_webRequest.ExecuteRequest(url);
+
+            if (httpWeb.StatusCode == HttpStatusCode.OK)
+            {
+                using var receiveStream = httpWeb.GetResponseStream();
+                StreamReader readStream = null;
+
+                if (string.IsNullOrWhiteSpace(httpWeb.CharacterSet))
+                    readStream = new StreamReader(receiveStream);
+
+                else
+                    readStream = new StreamReader(receiveStream, Encoding.Default);
+
+                data = readStream.ReadToEnd();
+            }
+            return data;
         }
     }
 }

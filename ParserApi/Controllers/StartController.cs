@@ -7,10 +7,7 @@ namespace ParserApi.Controllers
     public class StartController : ControllerBase
     {
         [HttpGet]
-        public string Get()
-        {
-            return "Parse API start";
-        }
+        public string Get()=> "Parse API start";
     }
 }
 
