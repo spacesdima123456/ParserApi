@@ -1,23 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\FastNet\\ParserApi\\ParserApi.csproj": {}
+    "C:\\ParserApi\\ParserApi\\ParserApi.csproj": {}
   },
   "projects": {
-    "D:\\FastNet\\ParserApi\\ParserApi.csproj": {
+    "C:\\ParserApi\\ParserApi\\ParserApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FastNet\\ParserApi\\ParserApi.csproj",
+        "projectUniqueName": "C:\\ParserApi\\ParserApi\\ParserApi.csproj",
         "projectName": "ParserApi",
-        "projectPath": "D:\\FastNet\\ParserApi\\ParserApi.csproj",
-        "packagesPath": "C:\\Users\\ДИМА\\.nuget\\packages\\",
-        "outputPath": "D:\\FastNet\\ParserApi\\obj\\",
+        "projectPath": "C:\\ParserApi\\ParserApi\\ParserApi.csproj",
+        "packagesPath": "C:\\Users\\WORK\\.nuget\\packages\\",
+        "outputPath": "C:\\ParserApi\\ParserApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "D:\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\ДИМА\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\WORK\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -26,7 +27,8 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "http://packages.nuget.org/v1/FeedService.svc/": {},
+          "https://www.nuget.org/api/v2/": {}
         },
         "frameworks": {
           "netcoreapp3.0": {
